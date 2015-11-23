@@ -1,0 +1,11 @@
+*.py[oc]
+/lib
+/local
+/bin
+/man
+/doc/_build/
+/include
+*.egg-info
+*.deb
+/dist/usr
+/share
