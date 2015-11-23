@@ -50,7 +50,6 @@ setup(
             "sphinxcontrib-autoanysrc",
             "alembic",
             "PyYAML",
-            "ERAlchemy",
             "coverage",
         ]
     }
