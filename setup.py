@@ -31,7 +31,7 @@ setup(
         "Flask==0.10.1",
         "Flask-Mail==0.9.1",
         "Flask-SQLAlchemy==2.0",
-        "psycopg2==2.6.1",
+        "mysqlclient==1.3.7",
         "SQLAlchemy-Continuum==1.1.5",
         "SQLAlchemy_Utils==0.30.11",
         "python-dateutil==2.4.2",
