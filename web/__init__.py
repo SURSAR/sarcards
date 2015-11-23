@@ -43,20 +43,21 @@ except ImportError:
 import os
 import datetime
 import json
-from flask import Flask, render_template, render_template_string
+from flask import Flask, render_template, render_template_string, send_from_directory
 from flask.json import JSONEncoder
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from flask.ext.admin import Admin
 import html2text
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../static', static_path='/static')
 
 app.config['TESTING'] = os.environ.get('TESTING', False)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['MAIL_DEFAULT_SENDER'] = 'Surrey <members@ssursar.org.uk>'
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SQLALCHEMY_ECHO'] = True
+app.config['SECRET_KEY'] = '123456790'
 
 db = SQLAlchemy(app)
 

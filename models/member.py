@@ -8,7 +8,7 @@ class Member(db.Model):
     """"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
-    image = db.Column(db.BLOB())
-    
+    image = db.Column(db.String(255))
+
     def __str__(self):
         return self.title

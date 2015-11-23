@@ -3,6 +3,6 @@
 """
 from __future__ import division, absolute_import, print_function, unicode_literals
 
-from .uwsgi import *
+from .uwsgi import * #pylint: disable=wildcard-import,unused-wildcard-import
 
 app.run()

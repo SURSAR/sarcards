@@ -9,3 +9,4 @@
 *.deb
 /dist/usr
 /share
+/static
