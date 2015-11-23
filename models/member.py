@@ -7,7 +7,8 @@ from web import db
 class Member(db.Model):
     """"""
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255))
-
+    title = db.Column(db.String(255), nullable=False)
+    image = db.Column(db.BLOB())
+    
     def __str__(self):
         return self.title

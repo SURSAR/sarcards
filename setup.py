@@ -28,7 +28,9 @@ setup(
         'web': ['templates/*']
     },
     install_requires=[
+        "Pillow==3.0.0",
         "Flask==0.10.1",
+        "Flask-Admin==1.2.0",
         "Flask-Mail==0.9.1",
         "Flask-SQLAlchemy==2.0",
         "mysqlclient==1.3.7",
@@ -48,7 +50,6 @@ setup(
             "sphinxcontrib-autoanysrc",
             "alembic",
             "PyYAML",
-            "pygraphviz==1.3rc2",
             "ERAlchemy",
             "coverage",
         ]

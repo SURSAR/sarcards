@@ -47,17 +47,20 @@ from flask import Flask, render_template, render_template_string
 from flask.json import JSONEncoder
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
+from flask.ext.admin import Admin
 import html2text
 
 app = Flask(__name__)
 
 app.config['TESTING'] = os.environ.get('TESTING', False)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
-app.config['MAIL_DEFAULT_SENDER'] = 'Wirehive Quote Tool <support@wirehive.net>'
+app.config['MAIL_DEFAULT_SENDER'] = 'Surrey <members@ssursar.org.uk>'
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy(app)
+
+admin = Admin(app, name='SAR', url='/')
 
 class CustomJSONEncoder(JSONEncoder):
     """"""

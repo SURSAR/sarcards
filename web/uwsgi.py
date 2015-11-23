@@ -17,3 +17,5 @@ import sqlalchemy as sa
 from . import app
 
 sa.orm.configure_mappers()
+
+from . import member
