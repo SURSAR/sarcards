@@ -2,14 +2,13 @@
 """"""
 from __future__ import division, absolute_import, print_function, unicode_literals
 
-import os
 from flask import url_for
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import form
 from jinja2 import Markup
 
 from . import admin, db
-from models.member import *
+from models.member import * #pylint: disable=wildcard-import, unused-wildcard-import
 
 class MemberView(ModelView):
     """"""
@@ -58,5 +57,8 @@ admin.add_view(ModelView(GlobalRole, db.session))
 admin.add_view(TeamView(Team, db.session))
 admin.add_view(ModelView(TeamQualification, db.session))
 admin.add_view(ModelView(TeamRole, db.session))
-
+admin.add_view(ModelView(Status, db.session))
 admin.add_view(MemberView(Member, db.session))
+
+admin.add_view(ModelView(IssueReason, db.session))
+admin.add_view(ModelView(Issue, db.session))
