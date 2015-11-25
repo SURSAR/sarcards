@@ -28,7 +28,6 @@ setup(
         'web': ['templates/*']
     },
     install_requires=[
-        "Pillow==3.0.0",
         "Flask==0.10.1",
         "Flask-Admin==1.2.0",
         "Flask-SQLAlchemy==2.0",

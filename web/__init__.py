@@ -16,7 +16,7 @@ app = Flask(__name__, static_folder='../static', static_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['MAIL_DEFAULT_SENDER'] = 'Surrey <members@ssursar.org.uk>'
 #app.config['PROPAGATE_EXCEPTIONS'] = True
-#app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = '123456790'
 
 db = SQLAlchemy(app)
