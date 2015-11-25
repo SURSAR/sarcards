@@ -31,26 +31,13 @@ setup(
         "Pillow==3.0.0",
         "Flask==0.10.1",
         "Flask-Admin==1.2.0",
-        "Flask-Mail==0.9.1",
         "Flask-SQLAlchemy==2.0",
         "mysqlclient==1.3.7",
-        "SQLAlchemy-Continuum==1.1.5",
-        "SQLAlchemy_Utils==0.30.11",
-        "python-dateutil==2.4.2",
-        "mock==1.0.1",
-        "uwsgidecorators==1.1.0",
-        "html2text==2015.6.21",
-        "requests==2.7.0",
     ],
     extras_require={
         'dev': [
-            "Sphinx",
-            "sphinxcontrib-httpdomain",
             "pylint",
-            "sphinxcontrib-autoanysrc",
-            "alembic",
-            "PyYAML",
-            "coverage",
+            "Flask-DebugToolbar",
         ]
     }
 )

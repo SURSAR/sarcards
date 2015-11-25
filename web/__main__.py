@@ -3,6 +3,11 @@
 """
 from __future__ import division, absolute_import, print_function, unicode_literals
 
-from .uwsgi import * #pylint: disable=wildcard-import,unused-wildcard-import
+from web.uwsgi import app #pylint: disable=wildcard-import,unused-wildcard-import
+from flask_debugtoolbar import DebugToolbarExtension
+
+app.debug = True
+
+toolbar = DebugToolbarExtension(app)
 
 app.run()
