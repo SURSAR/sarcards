@@ -2,8 +2,8 @@
 """"""
 from __future__ import division, absolute_import, print_function, unicode_literals
 
-from web import db
 import datetime
+from web import db
 
 class GlobalQualification(db.Model):
     """"""

@@ -2,6 +2,11 @@
 """"""
 from __future__ import division, absolute_import, print_function, unicode_literals
 
+import subprocess
+import uuid
+import datetime
+import base64
+import struct
 from flask import url_for
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import form
@@ -10,15 +15,10 @@ from jinja2 import Markup
 
 from . import admin, db
 from models.member import * #pylint: disable=wildcard-import, unused-wildcard-import
-import subprocess
-import uuid
-import datetime
-import base64
-import struct
 
 class MemberView(ModelView):
     """"""
-    def after_model_change(self, form, model, is_created):
+    def after_model_change(self, frm, model, is_created):
         """"""
         if model.image:
             subprocess.call([
@@ -56,7 +56,7 @@ class MemberView(ModelView):
         'image': form.FileUploadField(
             'Mugshot',
             base_path='static',
-            namegen=lambda x,y:str(uuid.uuid4()),
+            namegen=lambda x, y: str(uuid.uuid4()),
             allow_overwrite=False
         )
     }
@@ -78,7 +78,7 @@ class TeamView(ModelView):
         'logo': form.FileUploadField(
             'Logo',
             base_path='static',
-            namegen=lambda x,y:str(uuid.uuid4()),
+            namegen=lambda x, y: str(uuid.uuid4()),
             allow_overwrite=False
         )
     }
@@ -87,6 +87,7 @@ class IssueView(ModelView):
     """"""
     @action('issue', 'Issue', 'Are you sure you want to issue selected cards?')
     def action_issue(self, ids):
+        """"""
         for issue in Issue.query.filter(Issue.id.in_(ids)):
             if issue.issued != None:
                 raise Exception("Already Issued")
@@ -111,28 +112,28 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
     item.callsign,
     item.status.title
 )
-        data += "REV:%d%d%d\n" % (issue.issued.year, issue.issued.month, issue.issued.day)
-        data = data.replace("\n", "\r\n")
+            data += "REV:%d%d%d\n" % (issue.issued.year, issue.issued.month, issue.issued.day)
+            data = data.replace("\n", "\r\n")
 
-        bdata = (
-            b"BEGIN:VCARD\r\nVERSION:3.0" +
-            data.encode('utf-8') +
-            b"PHOTO;JPEG;ENCODING=BASE64:" + base64.b64encode(photo) +
-            b"\r\nEND:VCARD\r\n\r\n"
-        )
-        with open("static/" + item.image + ".ndef", "wb") as out:
-            out.write(b"\xC2\x0A")
-            out.write(struct.pack(">i", len(bdata)))
-            out.write(b"text/vcard" + bdata)
-        subprocess.call([
-            "gpg",
-            "-z",
-            "9",
-            "-u",
-            "252E0A0E",
-            "-b",
-            "static/" + item.image + ".ndef"
-        ])
+            bdata = (
+                b"BEGIN:VCARD\r\nVERSION:3.0" +
+                data.encode('utf-8') +
+                b"PHOTO;JPEG;ENCODING=BASE64:" + base64.b64encode(photo) +
+                b"\r\nEND:VCARD\r\n\r\n"
+            )
+            with open("static/" + item.image + ".ndef", "wb") as out:
+                out.write(b"\xC2\x0A")
+                out.write(struct.pack(">i", len(bdata)))
+                out.write(b"text/vcard" + bdata)
+            subprocess.call([
+                "gpg",
+                "-z",
+                "9",
+                "-u",
+                "252E0A0E",
+                "-b",
+                "static/" + item.image + ".ndef"
+            ])
 
         db.session.commit()
 

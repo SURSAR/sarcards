@@ -35,7 +35,7 @@ setup(
     ],
     extras_require={
         'dev': [
-            "pylint",
+            "pylint-flask",
             "Flask-DebugToolbar",
         ]
     }
