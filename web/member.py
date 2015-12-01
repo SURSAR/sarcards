@@ -38,7 +38,7 @@ class MemberView(ModelView):
                 "jpeg:extent=1024",
                 "-quality",
                 "100",
-                "static/thumb_%s" % model.image,
+                "jpg:static/thumb_%s" % model.image,
             ])
 
     def _list_thumbnail(self, context, model, name):
