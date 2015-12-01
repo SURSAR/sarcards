@@ -33,7 +33,7 @@ def main(files):
         db.session.add(quals[qual])
 
     for role in "Wading Team Leader,Flood Boat Operator,Water Incident Manager,Water Team Leader,Search Boat Operator,Level 2 (Hasty Search) Dog Handler,Level 3 (Area Search) Dog Handler,Ground Scenting Dog Handler,Search Technician,Trainee Team Leader,Team Leader,Search Planner,Search Operations,Search Manager,Medic,Doctor,Nurse,Paramedic,RPAS Pilot,RPAS Spotter,RPAS Controller".split(','):
-        if qual in "Search Technician,Team Leader,Search Planner,Search Operations,Search Manager,Medic,Doctor,Nurse,Paramedic".split(','):
+        if role in "Search Technician,Team Leader,Search Planner,Search Operations,Search Manager,Medic,Doctor,Nurse,Paramedic".split(','):
             role_obj = GlobalRole(
                 title=role
             )
@@ -66,9 +66,11 @@ def main(files):
             joined=datetime.datetime.strptime(row['Member Since'], "%d %b %Y")
         )
         for qual in "ST,tTl,TL,SP,SO,SM,DH2,DH3,DHGS,RP,RPS,RPC,Mod1,Mod2,Mod3,Mod4,Mod5,Mod6,RYA PB Lvl2,LRFR,Doctor,Nurse,Paramedic,4x4,Driver,Cat C1,NPPVL3".split(','):
-            member.qualifications.append(quals[qual])
+            if row[qual] == "y":
+                member.qualifications.append(quals[qual])
         for role in "Wading Team Leader,Flood Boat Operator,Water Incident Manager,Water Team Leader,Search Boat Operator,Level 2 (Hasty Search) Dog Handler,Level 3 (Area Search) Dog Handler,Ground Scenting Dog Handler,Search Technician,Trainee Team Leader,Team Leader,Search Planner,Search Operations,Search Manager,Medic,Doctor,Nurse,Paramedic,RPAS Pilot,RPAS Spotter,RPAS Controller".split(','):
-            member.roles.append(roles[role])
+            if row[role] == role:
+                member.roles.append(roles[role])
         db.session.add(member)
     db.session.commit()
 
