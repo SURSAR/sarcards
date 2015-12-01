@@ -1,7 +1,6 @@
 .PHONY: lint shell publish tag deb
 
 export PYTHONDONTWRITEBYTECODE=1
-export SQLALCHEMY_DATABASE_URI=mysql:///sarcards
 
 lint: lib/python3.4/site-packages/
 	bin/pylint --load-plugins=pylint_flask --rcfile=.pylintrc -f colorized -r no *.py models web
