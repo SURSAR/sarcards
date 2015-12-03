@@ -23,8 +23,9 @@ class MemberView(ModelView):
         if model.image:
             subprocess.call([
                 "convert",
-                "static/%s" % model.image,
-                "-flatten",
+                "static/%s[0]" % model.image,
+                "-alpha",
+                "off",
                 "-strip",
                 "-gravity",
                 "Center",
