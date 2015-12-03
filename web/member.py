@@ -34,6 +34,7 @@ class MemberView(ModelView):
                 "gray",
                 "-resize",
                 "70x90",
+		"-normalize",
                 "-define",
                 "jpeg:extent=1024",
                 "-quality",
