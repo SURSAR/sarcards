@@ -7,11 +7,13 @@ import uuid
 import datetime
 import base64
 import struct
-from flask import url_for
+from flask import url_for, render_template_string
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import form
 from flask_admin.actions import action
 from jinja2 import Markup
+from PyPDF2 import PdfFileReader, PdfFileWriter
+from weasyprint import HTML
 
 from . import admin, db
 from models.member import * #pylint: disable=wildcard-import, unused-wildcard-import
@@ -156,7 +158,27 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
                 "-b",
                 "static/" + item.image + ".ndef"
             ])
+        charity_number
+        HTML(
+        	render_template_string("test.html.j2", {
+            	"surname": item.name.split()[-1],
+            	"given": " ".join(item.name.split()[:-1]),
+            	"role": item.primary_role,
+            	"joined": item.joined,
+            	"issued": issue.issued,
+            	"expiry": issue.issued + date(issue.issued.year + 10, 1, 1) - date(issue.issued.year, 1, 1),
+            	"charity": item.team.charity_number
+        	})
+		).write_pdf('/tmp/sarcard.pdf')
 
+		output = PdfFileWriter()
+		pdfOne = PdfFileReader(open("../blank.pdf", "rb"))
+		pdfTwo = PdfFileReader(open("/tmp/sarcard.pdf", "rb"))
+		output.addPage(pdfOne.getPage(0))
+		output.getPage(0).mergePage(pdfTwo.getPage(0))
+		outputStream = open("static/" + item.image + ".pdf", "wb")
+		output.write(outputStream)
+		outputStream.close()
         db.session.commit()
 
 admin.add_view(ModelView(GlobalQualification, db.session))

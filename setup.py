@@ -32,6 +32,8 @@ setup(
         "Flask-Admin==1.2.0",
         "Flask-SQLAlchemy==2.0",
         "mysqlclient==1.3.7",
+        "PyPDF2==1.25.1",
+        "WeasyPrint==0.24",
     ],
     extras_require={
         'dev': [

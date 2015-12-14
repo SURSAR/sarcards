@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <style type="text/css">
+@page {
+    size: A5;
+    margin: 0px;
+}
+html, body {
+    font-family: 'Arial';
+    font-size: 10pt;
+}
+div#card {
+    position: absolute;
+    width: 8.66140cm;
+    height: 5.41020cm;
+    bottom: 0cm;
+    left: 0cm;
+}
+p#surname {
+    font-weight: bold;
+    position: absolute;
+    left: 1.6cm;
+    top: -.05cm;
+}
+p#given {
+    font-weight: bold;
+    position: absolute;
+    left: 1.6cm;
+    top: .35cm;
+}
+p#role {
+    position: absolute;
+    left: 1.6cm;
+    top: .82cm;
+}
+p#callsign {
+    font-weight: bold;
+    position: absolute;
+    left: 3.2cm;
+    top: 1.95cm;
+}
+p#joined {
+    position: absolute;
+    left: 3.2cm;
+    top: 2.7cm;
+}
+p#issued {
+    position: absolute;
+    left: 3.2cm;
+    top: 3.4cm;
+}
+p#expiry {
+    position: absolute;
+    left: 3.2cm;
+    top: 4.1cm;
+}
+p#charity {
+    font-size: 5pt;
+    position: absolute;
+    left: 5cm;
+    top: 4.85cm;
+}
+        </style>
+    </head>
+    <body>
+        <div id="card">
+            <p id="surname">{% surname %}</p>
+            <p id="given">{% given %}</p>
+            <p id="role">{% role %}</p>
+            <p id="callsign">{% callsign %}</p>
+            <p id="joined">{% joined %}</p>
+            <p id="issued">{% issued %}</p>
+            <p id="expiry">{% expiry %}</p>
+            <p id="charity">{% charity %}</p>
+        </div>
+    </body>
+</html>
