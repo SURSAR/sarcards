@@ -24,7 +24,7 @@ class MemberView(ModelView):
         """"""
         if model.image:
             subprocess.call([
-                "convert",
+                "/usr/local/bin/convert",
                 "static/%s[0]" % model.image,
                 "-alpha",
                 "off",
@@ -43,7 +43,7 @@ class MemberView(ModelView):
                 "/tmp/cv.jpg"
             ]).decode('ascii')[:-1]
             subprocess.call([
-                "convert",
+                "/usr/local/bin/convert",
                 "static/%s[0]" % model.image,
                 "-alpha",
                 "off",
