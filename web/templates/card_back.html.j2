@@ -1,0 +1,73 @@
+<html
+    <head>
+        <style type="text/css">
+@page {
+    size: A5;
+    margin: 0px;
+}
+html, body {
+    font-family: 'Arial';
+    font-size: 10pt;
+}
+div#card {
+    position: absolute;
+    width: 8.66140cm;
+    height: 5.41020cm;
+    bottom: 0cm;
+    left: 0cm;
+}
+p#qual {
+    font-size: 70%;
+    position: absolute;
+    left: 1.1cm;
+    top: .1cm;
+    width: 3.1cm;
+    height: 2.3cm;
+    overflow: hidden;
+}
+p#qual2 {
+    font-size: 70%;
+    position: absolute;
+    left: 4.4cm;
+    top: 0cm;
+    width: 3.1cm;
+    height: 2.3cm;
+    overflow: hidden;
+}
+p#qual2 span {
+    position: relative;
+    top: -2.3cm;
+}
+p#role {
+    font-size: 70%;
+    position: absolute;
+    left: 1.1cm;
+    top: 2.55cm;
+    width: 3.1cm;
+    height: 1.85cm;
+    overflow: hidden;
+}
+p#role2 {
+    font-size: 70%;
+    position: absolute;
+    left: 4.4cm;
+    top: 2.55cm;
+    width: 3.1cm;
+    height: 1.85cm;
+    overflow: hidden;
+}
+p#role2 span {
+    position: relative;
+    top: -1.8cm;
+}
+        </style>
+    </head>
+    <body>
+        <div id="card">
+            <p id="qual">{{ qual }}</p>
+            <p id="qual2"><span>{{ qual }}</span></p>
+            <p id="role">{{ role }}</p>
+            <p id="role2"><span>{{ role }}</span></p>
+        </div>
+    </body>
+</html>

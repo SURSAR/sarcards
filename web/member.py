@@ -21,6 +21,49 @@ from models.member import * #pylint: disable=wildcard-import, unused-wildcard-im
 
 class MemberView(ModelView):
     """"""
+    column_searchable_list = ('name', 'primary_role', 'team.name', 'status.title')
+
+    @action('test_pdf', 'Test')
+    def test_pdf(self, ids):
+
+        for item in Member.query.filter(Member.id.in_(ids)):
+            HTML(
+                string=render_template(
+                    "card.html.j2",
+                    surname=item.name.split()[-1],
+                    given=" ".join(item.name.split()[:-1]),
+                    role=item.primary_role,
+                    joined=item.joined,
+                    issued=datetime.datetime.now().date(),
+                    expiry=datetime.datetime.now().date(),
+                    charity=item.team.charity_number,
+                    callsign=item.callsign,
+                    status=item.status.title,
+                    status_color='red' if item.status.title.startswith('Non') else 'green',
+                    image=item.image,
+                    logo=item.team.logo
+                )
+            ).write_pdf('/tmp/sarcard.pdf')
+            HTML(
+                string=render_template(
+                    "card_back.html.j2",
+                    role=", ".join([role.title for role in item.roles]),
+                    qual=", ".join([qual.title for qual in item.qualifications])
+                )
+            ).write_pdf('/tmp/sarcard2.pdf')
+    
+            output = PdfFileWriter()
+            pdfOne = PdfFileReader(open("blank.pdf", "rb"))
+            pdfTwo = PdfFileReader(open("/tmp/sarcard.pdf", "rb"))
+            pdfThree = PdfFileReader(open("/tmp/sarcard2.pdf", "rb"))
+            output.addPage(pdfOne.getPage(0))
+            output.getPage(0).mergePage(pdfTwo.getPage(0))
+            output.addPage(pdfOne.getPage(1))
+            output.getPage(1).mergePage(pdfThree.getPage(0))
+            outputStream = open("static/" + item.image + ".pdf", "wb")
+            output.write(outputStream)
+            outputStream.close()
+
     def after_model_change(self, frm, model, is_created):
         """"""
         if model.image:
@@ -65,14 +108,33 @@ class MemberView(ModelView):
                 "100",
                 "jpg:static/thumb_%s" % model.image,
             ])
+            subprocess.call([
+                "/usr/local/bin/convert",
+                "static/%s[0]" % model.image,
+                "-strip",
+                "-resize",
+                "300x400",
+                "-compose",
+                "src",
+                "-gravity south",
+                "-extent",
+                "300x400",
+                "png:static/hi_%s" % model.image,
+            ])
 
     def _list_thumbnail(self, context, model, name):
         """"""
         if not model.image:
             return ''
-        return Markup('<img src="%s">' % url_for(
-            'static',
-            filename="thumb_" + model.image
+        return Markup('<a href="%s"><img src="%s"></a>' % (
+            url_for(
+                'static',
+                filename=model.image + ".pdf"
+            ),
+            url_for(
+                'static',
+                filename="thumb_" + model.image
+            )
         ))
     column_formatters = {
         'image': _list_thumbnail
@@ -94,7 +156,7 @@ class TeamView(ModelView):
             return ''
         return Markup('<img src="%s">' % url_for(
             'static',
-            filename=form.thumbgen_filename(model.logo)
+            filename="thumb_" + model.logo
         ))
     column_formatters = {
         'logo': _list_thumbnail
@@ -107,6 +169,22 @@ class TeamView(ModelView):
             allow_overwrite=False
         )
     }
+
+    def after_model_change(self, frm, model, is_created):
+        """"""
+        if model.logo:
+            subprocess.call([
+                "/usr/local/bin/convert",
+                "static/%s[0]" % model.image,
+                "-alpha",
+                "off",
+                "-strip",
+                "-resize",
+                "70x70",
+                "-quality",
+                "80",
+                "jpg:static/thumb_%s" % model.image,
+            ])
 
 class IssueView(ModelView):
     """"""
@@ -178,6 +256,7 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
         pdfTwo = PdfFileReader(open("/tmp/sarcard.pdf", "rb"))
         output.addPage(pdfOne.getPage(0))
         output.getPage(0).mergePage(pdfTwo.getPage(0))
+        output.addPage(pdfOne.getPage(1))
         outputStream = open("static/" + item.image + ".pdf", "wb")
         output.write(outputStream)
         outputStream.close()

@@ -60,10 +60,40 @@ p#charity {
     left: 5cm;
     top: 4.85cm;
 }
+p#status {
+    position: absolute;
+    font-size: 120%;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    left: 5.5cm;
+    padding: 0.1cm;
+    top: 2cm;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    width: 5.41020cm;
+    transform: rotate(90deg);
+    background-color: {{ status_color }};
+}
+img#image {
+    top: 1.81020cm;
+    position: absolute;
+    width: 2.7cm;
+    height: 3.6cm
+}
+img#logo {
+    top: -0.7cm;
+    left: 5cm;
+    position: absolute;
+    width: 2.7cm;
+    height: 3.6cm;
+}
         </style>
     </head>
     <body>
         <div id="card">
+            <img id="logo" src="file:///home/cards/sarcards/static/hi_{{ logo }}" />
+            <img id="image" src="file:///home/cards/sarcards/static/hi_{{ image }}" />
             <p id="surname">{{ surname }}</p>
             <p id="given">{{ given }}</p>
             <p id="role">{{ role }}</p>
@@ -72,6 +102,7 @@ p#charity {
             <p id="issued">{{ issued }}</p>
             <p id="expiry">{{ expiry }}</p>
             <p id="charity">{{ charity }}</p>
+            <p id="status">{{ status }}</p>
         </div>
     </body>
 </html>
