@@ -22,21 +22,21 @@ p#qual {
     left: 1.1cm;
     top: .1cm;
     width: 3.1cm;
-    height: 2.3cm;
+    height: 2.19cm;
     overflow: hidden;
 }
 p#qual2 {
     font-size: 70%;
     position: absolute;
     left: 4.4cm;
-    top: 0cm;
+    top: .1cm;
     width: 3.1cm;
-    height: 2.3cm;
+    height: 2.2cm;
     overflow: hidden;
 }
 p#qual2 span {
     position: relative;
-    top: -2.3cm;
+    top: -2.19cm;
 }
 p#role {
     font-size: 70%;
@@ -60,6 +60,13 @@ p#role2 span {
     position: relative;
     top: -1.8cm;
 }
+p#prop {
+    font-size: 50%;
+    position: absolute;
+    left: 0.75cm;
+    top: 4.6cm;
+    width: 7.2cm;
+}    
         </style>
     </head>
     <body>
@@ -68,6 +75,7 @@ p#role2 span {
             <p id="qual2"><span>{{ qual }}</span></p>
             <p id="role">{{ role }}</p>
             <p id="role2"><span>{{ role }}</span></p>
+            <p id="prop">Property of {{ add }}</p>
         </div>
     </body>
 </html>

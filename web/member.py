@@ -23,7 +23,7 @@ class MemberView(ModelView):
     """"""
     column_searchable_list = ('name', 'primary_role', 'team.name', 'status.title')
 
-    @action('test_pdf', 'Test')
+    @action('test_pdf', 'Sample')
     def test_pdf(self, ids):
 
         for item in Member.query.filter(Member.id.in_(ids)):
@@ -33,13 +33,13 @@ class MemberView(ModelView):
                     surname=item.name.split()[-1],
                     given=" ".join(item.name.split()[:-1]),
                     role=item.primary_role,
-                    joined=item.joined,
-                    issued=datetime.datetime.now().date(),
-                    expiry=datetime.datetime.now().date(),
+                    joined=item.joined.strftime("%d %b %Y"),
+                    issued=datetime.datetime.now().date().strftime("%d %b %Y"),
+                    expiry=datetime.datetime.now().date().strftime("%d %b %Y"),
                     charity=item.team.charity_number,
                     callsign=item.callsign,
-                    status=item.status.title,
-                    status_color='red' if item.status.title.startswith('Non') else 'green',
+                    status='sample', #item.status.title,
+                    status_color='#D90000', # if item.status.title.startswith('Non') else '#4c8c2b',
                     image=item.image,
                     logo=item.team.logo
                 )
@@ -47,8 +47,9 @@ class MemberView(ModelView):
             HTML(
                 string=render_template(
                     "card_back.html.j2",
-                    role=", ".join([role.title for role in item.roles]),
-                    qual=", ".join([qual.title for qual in item.qualifications])
+                    role="<br />".join([role.title for role in item.roles]),
+                    qual="<br />".join([qual.title for qual in item.qualifications]),
+                    add=item.team.address
                 )
             ).write_pdf('/tmp/sarcard2.pdf')
     
@@ -60,7 +61,7 @@ class MemberView(ModelView):
             output.getPage(0).mergePage(pdfTwo.getPage(0))
             output.addPage(pdfOne.getPage(1))
             output.getPage(1).mergePage(pdfThree.getPage(0))
-            outputStream = open("static/" + item.image + ".pdf", "wb")
+            outputStream = open("static/sam_" + item.image + ".pdf", "wb")
             output.write(outputStream)
             outputStream.close()
 
@@ -129,7 +130,7 @@ class MemberView(ModelView):
         return Markup('<a href="%s"><img src="%s"></a>' % (
             url_for(
                 'static',
-                filename=model.image + ".pdf"
+                filename="sam_" + model.image + ".pdf"
             ),
             url_for(
                 'static',
@@ -175,7 +176,7 @@ class TeamView(ModelView):
         if model.logo:
             subprocess.call([
                 "/usr/local/bin/convert",
-                "static/%s[0]" % model.image,
+                "static/%s[0]" % model.logo,
                 "-alpha",
                 "off",
                 "-strip",
@@ -183,11 +184,44 @@ class TeamView(ModelView):
                 "70x70",
                 "-quality",
                 "80",
-                "jpg:static/thumb_%s" % model.image,
+                "jpg:static/thumb_%s" % model.logo,
+            ])
+            subprocess.call([
+                "/usr/local/bin/convert",
+                "static/%s[0]" % model.logo,
+                "-strip",
+                "-resize",
+                "300x400",
+                "-compose",
+                "src",
+                "-gravity south",
+                "-extent",
+                "300x400",
+                "png:static/hi_%s" % model.logo,
             ])
 
 class IssueView(ModelView):
     """"""
+
+    def _list_links(self, context, model, name):
+        """"""
+        return Markup('%s <a href="%s">NDEF</a> <a href="%s">PDF</a>' % (
+            model.subject,
+            url_for(
+                'static',
+                filename=model.subject.image + ".ndef"
+            ),
+            url_for(
+                'static',
+                filename=model.subject.image + ".pdf"
+            )
+        ))
+
+    column_formatters = {
+        'subject': _list_links
+    }
+
+
     @action('issue', 'Issue', 'Are you sure you want to issue selected cards?')
     def action_issue(self, ids):
         """"""
@@ -238,29 +272,44 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
                 "static/" + item.image + ".ndef"
             ])
 
+
         HTML(
             string=render_template(
                 "card.html.j2",
                 surname=item.name.split()[-1],
                 given=" ".join(item.name.split()[:-1]),
                 role=item.primary_role,
-                joined=item.joined,
-                issued=issue.issued,
-                expiry=issue.issued + (datetime.date(issue.issued.year + 10, 1, 1) - datetime.date(issue.issued.year, 1, 1)),
-                charity=item.team.charity_number
+                joined=item.joined.strftime("%d %b %Y"),
+                issued=issue.issued.strftime("%d %b %Y"),
+                expiry=(issue.issued + (datetime.date(issue.issued.year + 10, 1, 1) - datetime.date(issue.issued.year, 1, 1))).strftime("%d %b %Y"),
+                charity=item.team.charity_number,
+                callsign=item.callsign,
+                status=item.status.title,
+                status_color='#D90000' if item.status.title.startswith('Non') else '#4c8c2b',
+                image=item.image,
+                logo=item.team.logo
             )
         ).write_pdf('/tmp/sarcard.pdf')
+        HTML(
+            string=render_template(
+                "card_back.html.j2",
+                role="<br />".join([role.title for role in item.roles]),
+                qual="<br />".join([qual.title for qual in item.qualifications]),
+                add=item.team.address
+            )
+        ).write_pdf('/tmp/sarcard2.pdf')
 
         output = PdfFileWriter()
         pdfOne = PdfFileReader(open("blank.pdf", "rb"))
         pdfTwo = PdfFileReader(open("/tmp/sarcard.pdf", "rb"))
+        pdfThree = PdfFileReader(open("/tmp/sarcard2.pdf", "rb"))
         output.addPage(pdfOne.getPage(0))
         output.getPage(0).mergePage(pdfTwo.getPage(0))
         output.addPage(pdfOne.getPage(1))
+        output.getPage(1).mergePage(pdfThree.getPage(0))
         outputStream = open("static/" + item.image + ".pdf", "wb")
         output.write(outputStream)
         outputStream.close()
-        db.session.commit()
 
 admin.add_view(ModelView(GlobalQualification, db.session))
 admin.add_view(ModelView(GlobalRole, db.session))
