@@ -21,7 +21,7 @@ from models.member import * #pylint: disable=wildcard-import, unused-wildcard-im
 
 class MemberView(ModelView):
     """"""
-    column_searchable_list = ('name', 'primary_role', 'team.name', 'status.title')
+    column_searchable_list = ('name', 'primary_role', 'team.name', 'callsign', 'status.title')
 
     @action('test_pdf', 'Sample')
     def test_pdf(self, ids):
@@ -49,14 +49,15 @@ class MemberView(ModelView):
                     "card_back.html.j2",
                     role="<br />".join([role.title for role in item.roles]),
                     qual="<br />".join([qual.title for qual in item.qualifications]),
+                    team=item.team.name,
                     add=item.team.address
                 )
             ).write_pdf('/tmp/sarcard2.pdf')
     
             output = PdfFileWriter()
-            pdfOne = PdfFileReader(open("blank.pdf", "rb"))
-            pdfTwo = PdfFileReader(open("/tmp/sarcard.pdf", "rb"))
-            pdfThree = PdfFileReader(open("/tmp/sarcard2.pdf", "rb"))
+            pdfOne = PdfFileReader("blank.pdf")
+            pdfTwo = PdfFileReader("/tmp/sarcard.pdf")
+            pdfThree = PdfFileReader("/tmp/sarcard2.pdf")
             output.addPage(pdfOne.getPage(0))
             output.getPage(0).mergePage(pdfTwo.getPage(0))
             output.addPage(pdfOne.getPage(1))
@@ -117,7 +118,8 @@ class MemberView(ModelView):
                 "300x400",
                 "-compose",
                 "src",
-                "-gravity south",
+                "-gravity",
+                "south",
                 "-extent",
                 "300x400",
                 "png:static/hi_%s" % model.image,
@@ -194,7 +196,8 @@ class TeamView(ModelView):
                 "300x400",
                 "-compose",
                 "src",
-                "-gravity south",
+                "-gravity",
+                "south",
                 "-extent",
                 "300x400",
                 "png:static/hi_%s" % model.logo,
@@ -203,8 +206,14 @@ class TeamView(ModelView):
 class IssueView(ModelView):
     """"""
 
+    column_default_sort = ('requested', True)
+    column_list = ('subject', 'subject.callsign', 'requester', 'issuer', 'reason', 'requested', 'issued', 'reason')
+
     def _list_links(self, context, model, name):
         """"""
+        if model.subject.image is None:
+            return model.subject
+
         return Markup('%s <a href="%s">NDEF</a> <a href="%s">PDF</a>' % (
             model.subject,
             url_for(
@@ -229,6 +238,7 @@ class IssueView(ModelView):
             if issue.issued != None:
                 raise Exception("Already Issued")
             issue.issued = datetime.datetime.now()
+            db.session.commit()
             item = issue.subject
             photo = open('static/thumb_' + item.image, 'rb').read()
             data = """
@@ -262,19 +272,18 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
                 out.write(b"\xC2\x0A")
                 out.write(struct.pack(">i", len(bdata)))
                 out.write(b"text/vcard" + bdata)
-            subprocess.call([
-                "gpg",
-                "-z",
-                "9",
-                "-u",
-                "252E0A0E",
-                "-b",
-                "static/" + item.image + ".ndef"
-            ])
+            
+            #subprocess.call([
+            #    "gpg",
+            #    "-z",
+            #    "9",
+            #    "-u",
+            #    "252E0A0E",
+            #    "-b",
+            #    "static/" + item.image + ".ndef"
+            #])
 
-
-        HTML(
-            string=render_template(
+            html = render_template(
                 "card.html.j2",
                 surname=item.name.split()[-1],
                 given=" ".join(item.name.split()[:-1]),
@@ -289,27 +298,38 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
                 image=item.image,
                 logo=item.team.logo
             )
-        ).write_pdf('/tmp/sarcard.pdf')
-        HTML(
-            string=render_template(
+
+            print(html)
+
+            HTML(
+                string=html
+            ).write_pdf('/tmp/sarcard.pdf')
+            
+            html = render_template(
                 "card_back.html.j2",
                 role="<br />".join([role.title for role in item.roles]),
                 qual="<br />".join([qual.title for qual in item.qualifications]),
+                team=item.team.name,
                 add=item.team.address
             )
-        ).write_pdf('/tmp/sarcard2.pdf')
 
-        output = PdfFileWriter()
-        pdfOne = PdfFileReader(open("blank.pdf", "rb"))
-        pdfTwo = PdfFileReader(open("/tmp/sarcard.pdf", "rb"))
-        pdfThree = PdfFileReader(open("/tmp/sarcard2.pdf", "rb"))
-        output.addPage(pdfOne.getPage(0))
-        output.getPage(0).mergePage(pdfTwo.getPage(0))
-        output.addPage(pdfOne.getPage(1))
-        output.getPage(1).mergePage(pdfThree.getPage(0))
-        outputStream = open("static/" + item.image + ".pdf", "wb")
-        output.write(outputStream)
-        outputStream.close()
+            print(html)
+
+            HTML(
+                string=html
+            ).write_pdf('/tmp/sarcard2.pdf')
+    
+            output = PdfFileWriter()
+            pdfOne = PdfFileReader("blank.pdf", strict = False)
+            pdfTwo = PdfFileReader("/tmp/sarcard.pdf", strict = False)
+            pdfThree = PdfFileReader("/tmp/sarcard2.pdf", strict = False)
+            output.addPage(pdfOne.getPage(0))
+            output.getPage(0).mergePage(pdfTwo.getPage(0))
+            output.addPage(pdfOne.getPage(1))
+            output.getPage(1).mergePage(pdfThree.getPage(0))
+            outputStream = open("static/" + item.image + ".pdf", "wb")
+            output.write(outputStream)
+            outputStream.close()
 
 admin.add_view(ModelView(GlobalQualification, db.session))
 admin.add_view(ModelView(GlobalRole, db.session))

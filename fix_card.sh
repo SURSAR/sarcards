@@ -7,7 +7,8 @@
     300x400 \
     -compose \
     src \
-    -gravity south \
+    -gravity \
+    south \
     -extent \
     300x400 \
     png:hi_$1

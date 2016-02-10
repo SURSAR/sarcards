@@ -1,0 +1,9 @@
+TEAM: card postal address
+PDF (and NDEF) Callsign_SUR_FIST and force download
+TEAM logos as EPS
+Add ACL for Team Admin
+add hi_ to member columns
+Add a 'last issued' and 'Issue' button column to Members
+Add issue action as button (Really FLASK ADMIN THIS IS HOW IT SHOULD BE)
+Message quee that takes (I have blank card) message form card reader and returns NDEF+SIG (and records card ID)
+
