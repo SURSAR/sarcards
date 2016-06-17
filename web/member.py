@@ -21,6 +21,7 @@ from models.member import * #pylint: disable=wildcard-import, unused-wildcard-im
 
 class MemberView(ModelView):
     """"""
+    column_default_sort = ('id', True)
     column_searchable_list = ('name', 'primary_role', 'team.name', 'callsign', 'status.title')
 
     @action('test_pdf', 'Sample')
@@ -218,11 +219,11 @@ class IssueView(ModelView):
             model.subject,
             url_for(
                 'static',
-                filename=model.subject.image + ".ndef"
+                filename=model.subject.callsign.replace('/','_') + ".ndef"
             ),
             url_for(
                 'static',
-                filename=model.subject.image + ".pdf"
+                filename=model.subject.callsign.replace('/','_') + ".pdf"
             )
         ))
 
@@ -268,7 +269,7 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
                 b"PHOTO;JPEG;ENCODING=BASE64:" + base64.b64encode(photo) +
                 b"\r\nEND:VCARD\r\n\r\n"
             )
-            with open("static/" + item.image + ".ndef", "wb") as out:
+            with open("static/" + item.callsign.replace('/','_') + ".ndef", "wb") as out:
                 out.write(b"\xC2\x0A")
                 out.write(struct.pack(">i", len(bdata)))
                 out.write(b"text/vcard" + bdata)
@@ -327,7 +328,7 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
             output.getPage(0).mergePage(pdfTwo.getPage(0))
             output.addPage(pdfOne.getPage(1))
             output.getPage(1).mergePage(pdfThree.getPage(0))
-            outputStream = open("static/" + item.image + ".pdf", "wb")
+            outputStream = open("static/" + item.callsign.replace('/','_') + ".pdf", "wb")
             output.write(outputStream)
             outputStream.close()
 

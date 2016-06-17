@@ -62,7 +62,7 @@ class Member(db.Model):
     """"""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    callsign = db.Column(db.String(255))
+    callsign = db.Column(db.String(255), unique=True)
     primary_role = db.Column(db.String(255), nullable=False)
     status_id = db.Column(db.Integer, db.ForeignKey(Status.id), nullable=False)
     status = db.relationship(Status, backref='members')
