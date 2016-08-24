@@ -19,10 +19,14 @@ import datetime
 from . import admin, db
 from models.member import * #pylint: disable=wildcard-import, unused-wildcard-import
 
+def _group_prefix(a):
+    return [k + " " + ", ".join([v.split(" ", 1)[1] for v in a if v.split()[0] == k and " " in v]) for k in set([x.split()[0] for x in a])]
+
 class MemberView(ModelView):
     """"""
     column_default_sort = ('id', True)
     column_searchable_list = ('name', 'primary_role', 'team.name', 'callsign', 'status.title')
+    form_excluded_columns = ['issued', 'requested']
 
     @action('test_pdf', 'Sample')
     def test_pdf(self, ids):
@@ -48,8 +52,8 @@ class MemberView(ModelView):
             HTML(
                 string=render_template(
                     "card_back.html.j2",
-                    role="<br />".join([role.title for role in item.roles]),
-                    qual="<br />".join([qual.title for qual in item.qualifications]),
+                    role="<br />".join(_group_prefix([role.title for role in item.roles])),
+                    qual="<br />".join(_group_prefix([qual.title for qual in item.qualifications])),
                     team=item.team.name,
                     add=item.team.address
                 )
@@ -308,8 +312,8 @@ NOTE:roles=%s\\nqualifications=%s\\ncallsign=%s\\nstatus=%s
             
             html = render_template(
                 "card_back.html.j2",
-                role="<br />".join([role.title for role in item.roles]),
-                qual="<br />".join([qual.title for qual in item.qualifications]),
+                role="<br />".join(_group_prefix([role.title for role in item.roles])),
+                qual="<br />".join(_group_prefix([qual.title for qual in item.qualifications])),
                 team=item.team.name,
                 add=item.team.address
             )
